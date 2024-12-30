@@ -48,22 +48,21 @@ def index():
     ip_addresses = []
     if request.method == 'POST':
         if 'ip_address' in request.form:
-            ip_addresses = [request.form['ip_address']]
-            ip_info = [get_ip_info(ip_addresses)]
+            ip_address = request.form['ip_address']
+            ip_info = [get_ip_info(ip_address)]
         elif 'file' in request.files:
             file = request.files['file']
-            if (file and file.filename.endswith('.txt')) or (file and file.filename.endswith('.csv')):
+            if file and file.filename.endswith('.txt'):
                 file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
                 file.save(file_path)
                 with open(file_path, 'r') as f:
                     ip_addresses = [line.strip() for line in f.readlines()]
-                    
-    return render_template('index.html', ip_info=ip_info,ip_addresses=ip_addresses)
+    return render_template('index.html', ip_info=ip_info, ip_addresses=ip_addresses)
 
 @app.route('/get_ip_info', methods=['POST'])
 def get_ip_info_route():
-    ipAddress = request.form['ip_address']
-    ip_info = get_ip_info(ipAddress)
+    ip_address = request.form['ip_address']
+    ip_info = get_ip_info(ip_address)
     return jsonify(ip_info)
 
 if __name__ == "__main__":
